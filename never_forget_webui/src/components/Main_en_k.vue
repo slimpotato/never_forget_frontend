@@ -5,7 +5,7 @@
           
           <div style="text-align: center;">
   
-            <el-button type="primary" @click="fetchTodayData">仅查看：今天</el-button>
+            <el-button type="primary" @click="fetchTodayData">仅查看：今天（识）</el-button>
             <el-button type="success" @click="updateDelayTo">批量设置复习日-> </el-button>
             <el-date-picker
               v-model="delayToDatetime"
@@ -16,13 +16,19 @@
           </div>
           <div style="text-align: center; margin-top: 10px;">
   
-            【english】总数：{{total}} &nbsp; &nbsp;  
+            【english-k】总数：{{total}} &nbsp; &nbsp;  
+          
+          今天：<span style="color: red;"> {{todayCount}}</span> &nbsp; &nbsp;
+          明天：<span style="color: red;"> {{tomorrowCount}}</span> &nbsp; &nbsp;
+          后天：<span style="color: red;"> {{dayAfterTomorrowCount}}</span> &nbsp; &nbsp;
+
   
           </div>
             <el-table 
               :data="mainData"  
               :row-class-name="tableRowClassName"
               @selection-change="selectChange"
+              size="small"
               >
               <el-table-column width="40" type="selection"/>
               <el-table-column width="60" prop="id" sortable label="编号"></el-table-column>
@@ -30,15 +36,16 @@
               <el-table-column width="150" prop="object_reminder" label="提示"></el-table-column>
               <el-table-column width="180" prop="next_review_time" sortable label="下次时间"></el-table-column>
               <el-table-column width="80" prop="review_day_descp" sortable label="下次"></el-table-column>
-              <el-table-column width="60" prop="review_count" sortable label="次数"></el-table-column>
-              <el-table-column width="60" prop="textbook" sortable label="教材"></el-table-column>
-              <el-table-column width="60" prop="grade" sortable label="年级"></el-table-column>
+              <el-table-column width="60" prop="review_count" sortable label="对"></el-table-column>
+              <el-table-column width="60" prop="wrong_count" sortable label="错"></el-table-column>
+              <el-table-column width="80" prop="textbook" sortable label="教材"></el-table-column>
+              <el-table-column width="80" prop="grade" sortable label="年级"></el-table-column>
               <el-table-column width="65" prop="section" sortable label="章节"></el-table-column>
               <el-table-column width="220" label="操作">
                   <template #default="scope">
                     <div class="button-container">
-                      <el-button type="success" @click="addOneDay(scope.row)">推迟1天</el-button>
-                      <el-button v-if="!scope.row.needReview" type="success" @click="setTodayReview(scope.row)">今天复习</el-button>
+                      <el-button size="small" type="success" @click="addOneDay(scope.row)">推迟1天</el-button>
+                      <el-button size="small" v-if="!scope.row.needReview" type="success" @click="setTodayReview(scope.row)">今天复习</el-button>
                     </div>
                   </template>
                 </el-table-column>
@@ -67,6 +74,10 @@
       const selectIDs = ref([]);
   
 
+      const todayCount = ref(0);
+      const tomorrowCount = ref(0);
+      const dayAfterTomorrowCount = ref(0);
+
   
       const formatDatetime = (date) => {
         const year = date.getFullYear();
@@ -92,6 +103,7 @@
           });
           mainData.value = response.data.data_list;
           total.value = response.data.data_list.length;
+
   
         } catch (error) {
           console.error('请求失败:', error);
@@ -111,7 +123,24 @@
           });
           mainData.value = response.data.data_list;
           total.value = response.data.data_list.length;
-  
+
+          todayCount.value = 0;
+          tomorrowCount.value = 0;
+          dayAfterTomorrowCount.value = 0;
+
+          mainData.value.forEach(item => {
+              if ( item.needReview ) {
+                todayCount.value++;
+              }
+              else {
+                if (item.review_day_descp === '明天') {
+                  tomorrowCount.value++;
+                } else if (item.review_day_descp === '后天') {
+                  dayAfterTomorrowCount.value++;
+                }
+              }
+          });
+    
         } catch (error) {
           console.error('请求失败:', error);
         }
@@ -256,6 +285,9 @@
           total,
           delayToDatetime,
           defaultTime,
+          todayCount,
+          tomorrowCount,
+          dayAfterTomorrowCount,
           handleButtonClick,
           tableRowClassName,
           addOneDay,
