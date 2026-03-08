@@ -57,7 +57,7 @@ const formatDateTime = (date) => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
 
-const default_start_datetime = new Date(getDateString(-14));
+const default_start_datetime = new Date(getDateString(-60));
 const default_end_datetime = new Date(getDateString(0) );
 
 const start_datetime = ref(default_start_datetime);
@@ -67,10 +67,12 @@ const end_datetime = ref(default_end_datetime);
 const getDataFromApi = async () => {
   console.log('getDataFromApi in ---- ');
 
+  /*
   if (mainData.value && mainData.value.length > 0) {
     // 如果数据已经存在，直接返回
     return mainData.value;
   }
+  */
   
   const response = await axios.get('http://0.0.0.0:30088/get_review_info_for_echart', {
     params: {
@@ -132,6 +134,10 @@ const initChart = async () => {
 
   // 处理数据
   const chartData = processData(apiData);
+
+  if (chart.value && echarts.getInstanceByDom(chart.value)) {
+    echarts.dispose(chart.value);
+  }
   
   const myChart = echarts.init(chart.value);
 

@@ -34,13 +34,14 @@
             </el-sub-menu>
             -->
           </el-sub-menu>
-          <el-menu-item index="recently_charts_cmp">5.复习历史</el-menu-item>
+          
           <el-menu-item index="recently_plan_list_cmp">5.复习计划</el-menu-item>
           <el-menu-item index="object_analysis_cmp">6.单词熟练度</el-menu-item>
           <el-menu-item index="object_warehouse_analysis_cmp">7.课程进度-错</el-menu-item>
           <el-menu-item index="object_warehouse_analysis_rc_cmp">7.课程进度-对</el-menu-item>
-          
-          
+          <el-menu-item index="recently_charts_cmp">8.表-复习历史</el-menu-item>
+          <el-menu-item index="charts_vaild_point_cmp">8.表-有效点</el-menu-item>
+          <el-menu-item index="charts_words_history_cmp">8.表-单词历史</el-menu-item>
         </el-menu>
       </div>
       <!-- 右侧内容区域 -->
@@ -64,7 +65,8 @@
   import object_analysis_cmp from './components/object_analysis.vue';
   import object_warehouse_analysis_cmp from './components/object_warehouse_analysis.vue';
   import object_warehouse_analysis_rc_cmp from './components/object_warehouse_analysis_rc.vue';
-  
+  import charts_vaild_point_cmp from './components/charts_vaild_point.vue'; 
+  import charts_words_history_cmp from './components/charts_words_history.vue';
 
   const activeMenu = shallowRef('1-1');
   const currentComponent = shallowRef(Component1_1);
@@ -100,6 +102,12 @@
             break;
         case '1-5':
             currentComponent.value = Component1_5;
+            break;
+        case 'charts_words_history_cmp':
+            currentComponent.value = charts_words_history_cmp;
+            break;
+        case 'charts_vaild_point_cmp':
+            currentComponent.value = charts_vaild_point_cmp;
             break;
         case 'recently_charts_cmp':
             currentComponent.value = recently_charts_cmp;
